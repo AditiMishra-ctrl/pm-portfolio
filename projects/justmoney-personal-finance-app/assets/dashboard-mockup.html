@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JustMoney — Dashboard Mockup</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0f4f8; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; padding: 20px; }
+  .phone-frame {
+    width: 375px;
+    background: white;
+    border-radius: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+    overflow: hidden;
+    border: 8px solid #1a1a2e;
+  }
+  .status-bar { background: #1a237e; height: 30px; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; }
+  .status-bar span { color: white; font-size: 11px; }
+  .header { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); padding: 20px; color: white; }
+  .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .greeting { font-size: 13px; opacity: 0.85; }
+  .user-name { font-size: 18px; font-weight: 700; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #ff9800; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; }
+  .balance-card { background: rgba(255,255,255,0.15); border-radius: 16px; padding: 16px; backdrop-filter: blur(10px); }
+  .balance-label { font-size: 12px; opacity: 0.8; margin-bottom: 4px; }
+  .balance-amount { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+  .balance-sub { display: flex; gap: 20px; margin-top: 10px; }
+  .balance-sub-item { font-size: 11px; opacity: 0.8; }
+  .balance-sub-item span { display: block; font-size: 14px; font-weight: 600; opacity: 1; margin-top: 2px; }
+  .content { padding: 16px; }
+  .section-title { font-size: 13px; font-weight: 700; color: #333; text-transform: uppercase; letter-spacing: 0.5px; margin: 16px 0 10px; }
+  /* Nudge Card */
+  .nudge-card { background: linear-gradient(135deg, #ff6b35 0%, #f7c59f 100%); border-radius: 16px; padding: 14px; color: white; margin-bottom: 4px; }
+  .nudge-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; opacity: 0.85; margin-bottom: 4px; }
+  .nudge-text { font-size: 14px; font-weight: 600; line-height: 1.4; }
+  .nudge-action { margin-top: 10px; background: rgba(255,255,255,0.25); border-radius: 8px; padding: 6px 12px; display: inline-block; font-size: 12px; font-weight: 600; }
+  /* Goal Buckets */
+  .goals-row { display: flex; gap: 10px; }
+  .goal-card { flex: 1; background: #f8f9ff; border-radius: 14px; padding: 12px; border: 1.5px solid #e8ecff; }
+  .goal-emoji { font-size: 22px; margin-bottom: 6px; }
+  .goal-name { font-size: 11px; font-weight: 700; color: #333; }
+  .goal-amount { font-size: 13px; font-weight: 600; color: #1a237e; margin: 4px 0; }
+  .goal-progress-bar { height: 6px; background: #e0e7ff; border-radius: 3px; overflow: hidden; }
+  .goal-progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #3949ab, #7986cb); }
+  .goal-pct { font-size: 10px; color: #888; margin-top: 3px; }
+  /* Spending Categories */
+  .spend-list { display: flex; flex-direction: column; gap: 8px; }
+  .spend-item { display: flex; align-items: center; gap: 10px; }
+  .spend-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .spend-info { flex: 1; }
+  .spend-category { font-size: 12px; font-weight: 600; color: #333; }
+  .spend-bar-wrap { height: 4px; background: #f0f0f0; border-radius: 2px; margin-top: 3px; }
+  .spend-bar { height: 4px; border-radius: 2px; }
+  .spend-amt { font-size: 13px; font-weight: 700; color: #333; }
+  /* EMI */
+  .emi-card { background: #fff8e1; border-radius: 12px; padding: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; border-left: 4px solid #ffa000; }
+  .emi-info .emi-name { font-size: 13px; font-weight: 700; color: #333; }
+  .emi-info .emi-date { font-size: 11px; color: #888; margin-top: 2px; }
+  .emi-amt { font-size: 15px; font-weight: 800; color: #e65100; }
+  /* Bottom Nav */
+  .bottom-nav { border-top: 1px solid #f0f0f0; display: flex; justify-content: space-around; padding: 12px 0 8px; background: white; }
+  .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; cursor: pointer; }
+  .nav-icon { font-size: 20px; }
+  .nav-label { font-size: 9px; color: #888; }
+  .nav-item.active .nav-label { color: #1a237e; }
+  .nav-item.active .nav-icon { filter: none; }
+  .tag { display: inline-block; background: #e8f5e9; color: #2e7d32; font-size: 10px; font-weight: 600; border-radius: 6px; padding: 2px 7px; }
+  .tag.warn { background: #fff3e0; color: #e65100; }
+  .page-title { font-size: 11px; color: #666; text-align: center; margin-bottom: 4px; }
+  .mockup-label { text-align: center; font-size: 12px; color: #888; padding: 10px; background: #f0f4f8; font-style: italic; }
+</style>
+</head>
+<body>
+<div>
+  <div class="mockup-label">📱 JustMoney — Figma Prototype Mockup (Portfolio Asset)<br>Language: Hindi-first | Market: Tier-2 India</div>
+  <div class="phone-frame">
+    <div class="status-bar">
+      <span>9:41</span>
+      <span>📶 🔋</span>
+    </div>
+
+    <!-- Header with balance -->
+    <div class="header">
+      <div class="header-top">
+        <div>
+          <div class="greeting">नमस्ते, Rajan! 👋</div>
+          <div class="user-name">आपका पैसा</div>
+        </div>
+        <div class="avatar">R</div>
+      </div>
+      <div class="balance-card">
+        <div class="balance-label">कुल बैलेंस (Total Balance)</div>
+        <div class="balance-amount">₹1,24,350</div>
+        <div class="balance-sub">
+          <div class="balance-sub-item">बैंक खाता<span>₹1,10,000</span></div>
+          <div class="balance-sub-item">UPI Wallet<span>₹14,350</span></div>
+          <div class="balance-sub-item">इस महीने खर्च<span style="color:#ffcdd2">₹31,200</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- Monthly Nudge -->
+      <div class="nudge-card">
+        <div class="nudge-label">💡 इस महीने की जानकारी</div>
+        <div class="nudge-text">आपने खाने पर ₹4,200 खर्च किए — पिछले महीने से ₹800 ज़्यादा। क्या आप इसे कम करना चाहते हैं?</div>
+        <div class="nudge-action">देखें →</div>
+      </div>
+
+      <!-- Goal Buckets -->
+      <div class="section-title">🎯 आपके लक्ष्य (Your Goals)</div>
+      <div class="goals-row">
+        <div class="goal-card">
+          <div class="goal-emoji">🏫</div>
+          <div class="goal-name">Raju की फीस</div>
+          <div class="goal-amount">₹18,500 / ₹40,000</div>
+          <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:46%"></div></div>
+          <div class="goal-pct">46% पूरा ✓</div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-emoji">🏠</div>
+          <div class="goal-name">घर का डाउनपेमेंट</div>
+          <div class="goal-amount">₹85,000 / ₹3,00,000</div>
+          <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:28%"></div></div>
+          <div class="goal-pct">28% पूरा</div>
+        </div>
+        <div class="goal-card">
+          <div class="goal-emoji">✈️</div>
+          <div class="goal-name">शिमला यात्रा</div>
+          <div class="goal-amount">₹12,000 / ₹15,000</div>
+          <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:80%"></div></div>
+          <div class="goal-pct">80% पूरा 🎉</div>
+        </div>
+      </div>
+
+      <!-- Spending Categories -->
+      <div class="section-title">📊 इस महीने का खर्च</div>
+      <div class="spend-list">
+        <div class="spend-item">
+          <div class="spend-icon" style="background:#fff3e0">🍱</div>
+          <div class="spend-info">
+            <div class="spend-category">खाना-पीना</div>
+            <div class="spend-bar-wrap"><div class="spend-bar" style="width:68%;background:#ff9800"></div></div>
+          </div>
+          <div class="spend-amt">₹4,200 <span class="tag warn">↑</span></div>
+        </div>
+        <div class="spend-item">
+          <div class="spend-icon" style="background:#e3f2fd">🚌</div>
+          <div class="spend-info">
+            <div class="spend-category">यातायात</div>
+            <div class="spend-bar-wrap"><div class="spend-bar" style="width:35%;background:#2196f3"></div></div>
+          </div>
+          <div class="spend-amt">₹2,100</div>
+        </div>
+        <div class="spend-item">
+          <div class="spend-icon" style="background:#f3e5f5">🛍️</div>
+          <div class="spend-info">
+            <div class="spend-category">शॉपिंग</div>
+            <div class="spend-bar-wrap"><div class="spend-bar" style="width:45%;background:#9c27b0"></div></div>
+          </div>
+          <div class="spend-amt">₹2,800</div>
+        </div>
+        <div class="spend-item">
+          <div class="spend-icon" style="background:#e8f5e9">💊</div>
+          <div class="spend-info">
+            <div class="spend-category">स्वास्थ्य</div>
+            <div class="spend-bar-wrap"><div class="spend-bar" style="width:20%;background:#4caf50"></div></div>
+          </div>
+          <div class="spend-amt">₹1,200 <span class="tag">↓</span></div>
+        </div>
+      </div>
+
+      <!-- Upcoming EMIs -->
+      <div class="section-title">📅 आने वाले भुगतान</div>
+      <div class="emi-card">
+        <div class="emi-info">
+          <div class="emi-name">🏦 Home Loan EMI</div>
+          <div class="emi-date">15 जून को देय • 1 दिन बचे ⚠️</div>
+        </div>
+        <div class="emi-amt">₹8,500</div>
+      </div>
+      <div class="emi-card" style="border-left-color:#66bb6a;background:#f1f8e9">
+        <div class="emi-info">
+          <div class="emi-name">📱 Phone EMI</div>
+          <div class="emi-date">20 जून को देय • 6 दिन बचे</div>
+        </div>
+        <div class="emi-amt" style="color:#2e7d32">₹1,200</div>
+      </div>
+
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+      <div class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div class="nav-label" style="color:#1a237e;font-weight:700">होम</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">🎯</div>
+        <div class="nav-label">लक्ष्य</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📊</div>
+        <div class="nav-label">खर्च</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📅</div>
+        <div class="nav-label">EMI</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">👤</div>
+        <div class="nav-label">प्रोफाइल</div>
+      </div>
+    </div>
+  </div>
+  <div class="mockup-label">Built by Aditi Mishra | JustMoney Portfolio Project | IIIT Lucknow MBA</div>
+</div>
+</body>
+</html>

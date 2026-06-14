@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Partner Health Score Dashboard — OTA Marketplace</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #0f1117; font-family: 'Segoe UI', sans-serif; color: #e8eaf6; min-height: 100vh; padding: 24px; }
+  .container { max-width: 960px; margin: 0 auto; }
+  .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+  .logo { font-size: 20px; font-weight: 800; color: #7986cb; letter-spacing: -0.5px; }
+  .logo span { color: #ff9800; }
+  .partner-name { font-size: 14px; color: #90a4ae; }
+  .grid-top { display: grid; grid-template-columns: 300px 1fr; gap: 20px; margin-bottom: 20px; }
+
+  /* Health Score Card */
+  .score-card { background: linear-gradient(145deg, #1a1f3c, #252a4a); border-radius: 20px; padding: 28px; text-align: center; border: 1px solid #2d3561; }
+  .score-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #7986cb; margin-bottom: 12px; }
+  .score-circle { width: 160px; height: 160px; margin: 0 auto 16px; position: relative; }
+  .score-circle svg { transform: rotate(-90deg); }
+  .score-number { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+  .score-number .num { font-size: 48px; font-weight: 900; color: #4fc3f7; line-height: 1; }
+  .score-number .denom { font-size: 16px; color: #546e7a; }
+  .score-tier { font-size: 22px; font-weight: 800; color: #ffd54f; margin-bottom: 4px; }
+  .score-tier-badge { display: inline-block; background: rgba(255, 213, 79, 0.15); border: 1.5px solid #ffd54f; border-radius: 20px; padding: 4px 16px; font-size: 12px; font-weight: 700; color: #ffd54f; }
+  .score-change { font-size: 12px; color: #81c784; margin-top: 12px; }
+
+  /* Metrics Grid */
+  .metrics-grid { display: flex; flex-direction: column; gap: 12px; }
+  .metric-card { background: #1a1f3c; border-radius: 14px; padding: 16px; border: 1px solid #2d3561; }
+  .metric-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .metric-name { font-size: 13px; font-weight: 700; color: #b0bec5; }
+  .metric-weight { font-size: 11px; color: #546e7a; }
+  .metric-score-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+  .metric-bar-wrap { flex: 1; height: 8px; background: #263043; border-radius: 4px; overflow: hidden; }
+  .metric-bar { height: 100%; border-radius: 4px; transition: width 0.5s; }
+  .metric-val { font-size: 14px; font-weight: 800; min-width: 36px; text-align: right; }
+  .metric-sub { font-size: 11px; color: #546e7a; margin-top: 4px; }
+
+  /* Bottom Row */
+  .bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .card { background: #1a1f3c; border-radius: 16px; padding: 20px; border: 1px solid #2d3561; }
+  .card-title { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #7986cb; margin-bottom: 16px; }
+
+  /* Pricing Chart */
+  .price-row { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .hotel-name { font-size: 12px; color: #90a4ae; width: 130px; flex-shrink: 0; }
+  .price-bar-outer { flex: 1; height: 24px; background: #263043; border-radius: 6px; overflow: hidden; position: relative; }
+  .price-bar-inner { height: 100%; border-radius: 6px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 11px; font-weight: 700; color: white; }
+  .you-label { font-size: 10px; color: #4fc3f7; font-weight: 800; position: absolute; right: -30px; top: 50%; transform: translateY(-50%); }
+
+  /* Nudge Cards */
+  .nudge { border-radius: 10px; padding: 12px 14px; margin-bottom: 10px; border-left: 4px solid; }
+  .nudge.high { background: rgba(255, 152, 0, 0.1); border-color: #ff9800; }
+  .nudge.medium { background: rgba(79, 195, 247, 0.08); border-color: #4fc3f7; }
+  .nudge-title { font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+  .nudge.high .nudge-title { color: #ffb74d; }
+  .nudge.medium .nudge-title { color: #4fc3f7; }
+  .nudge-body { font-size: 11px; color: #78909c; line-height: 1.4; }
+  .nudge-action { margin-top: 8px; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 6px; display: inline-block; cursor: pointer; }
+  .nudge.high .nudge-action { background: rgba(255,152,0,0.2); color: #ff9800; }
+  .nudge.medium .nudge-action { background: rgba(79,195,247,0.12); color: #4fc3f7; }
+
+  .label-bar { text-align: center; font-size: 11px; color: #455a64; padding: 16px 0 4px; }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div class="logo">OTA<span>Partner</span> Console</div>
+    <div style="text-align:right">
+      <div class="partner-name">Hotel Sunrise Inn, Varanasi</div>
+      <div style="font-size:11px;color:#546e7a">Last updated: Today, 9:41 AM</div>
+    </div>
+  </div>
+
+  <div class="grid-top">
+    <!-- Health Score -->
+    <div class="score-card">
+      <div class="score-label">Partner Health Score</div>
+      <div class="score-circle">
+        <svg width="160" height="160" viewBox="0 0 160 160">
+          <circle cx="80" cy="80" r="65" fill="none" stroke="#263043" stroke-width="14"/>
+          <circle cx="80" cy="80" r="65" fill="none" stroke="url(#grad)" stroke-width="14"
+            stroke-dasharray="408" stroke-dashoffset="102" stroke-linecap="round"/>
+          <defs>
+            <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#4fc3f7"/>
+              <stop offset="100%" style="stop-color:#7986cb"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="score-number">
+          <div class="num">74</div>
+          <div class="denom">/100</div>
+        </div>
+      </div>
+      <div class="score-tier">🥇 Gold Partner</div>
+      <div style="height:8px"></div>
+      <div class="score-tier-badge">GOLD TIER</div>
+      <div class="score-change">▲ +6 points from last week</div>
+      <div style="margin-top:12px;font-size:11px;color:#546e7a">Reach 80 to unlock Platinum: reduced commission + featured placement</div>
+    </div>
+
+    <!-- Dimension Metrics -->
+    <div class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-name">💰 Pricing Competitiveness</span>
+          <span class="metric-weight">Weight: 25%</span>
+        </div>
+        <div class="metric-score-row">
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:72%;background:linear-gradient(90deg,#ff9800,#ffd54f)"></div></div>
+          <div class="metric-val" style="color:#ffd54f">18/25</div>
+        </div>
+        <div class="metric-sub">Your avg price: ₹2,850 | Market median: ₹2,640 | +8% above market</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-name">🏨 Inventory Availability</span>
+          <span class="metric-weight">Weight: 25%</span>
+        </div>
+        <div class="metric-score-row">
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:80%;background:linear-gradient(90deg,#4caf50,#81c784)"></div></div>
+          <div class="metric-val" style="color:#81c784">20/25</div>
+        </div>
+        <div class="metric-sub">82% rooms available during peak demand periods this month</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-name">⚡ Response Rate</span>
+          <span class="metric-weight">Weight: 20%</span>
+        </div>
+        <div class="metric-score-row">
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:85%;background:linear-gradient(90deg,#4fc3f7,#81d4fa)"></div></div>
+          <div class="metric-val" style="color:#4fc3f7">17/20</div>
+        </div>
+        <div class="metric-sub">Avg response time: 1.8 hrs | Platform benchmark: 2 hrs ✓</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-name">⭐ Guest Review Score</span>
+          <span class="metric-weight">Weight: 20%</span>
+        </div>
+        <div class="metric-score-row">
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:75%;background:linear-gradient(90deg,#9c27b0,#ce93d8)"></div></div>
+          <div class="metric-val" style="color:#ce93d8">15/20</div>
+        </div>
+        <div class="metric-sub">4.2/5.0 rating | 186 reviews | ▲ +0.2 from last month</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-header">
+          <span class="metric-name">📸 Listing Completeness</span>
+          <span class="metric-weight">Weight: 10%</span>
+        </div>
+        <div class="metric-score-row">
+          <div class="metric-bar-wrap"><div class="metric-bar" style="width:40%;background:linear-gradient(90deg,#f44336,#ef9a9a)"></div></div>
+          <div class="metric-val" style="color:#ef9a9a">4/10</div>
+        </div>
+        <div class="metric-sub">⚠️ Missing: 8 more photos, amenities checklist, check-in instructions</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <!-- Competitor Pricing -->
+    <div class="card">
+      <div class="card-title">📊 Live Competitor Pricing — Tonight</div>
+      <div class="price-row">
+        <span class="hotel-name" style="color:#4fc3f7;font-weight:700">★ Your Hotel</span>
+        <div class="price-bar-outer" style="flex:1">
+          <div class="price-bar-inner" style="width:78%;background:linear-gradient(90deg,#1a237e,#3949ab)">₹2,850</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <span class="hotel-name">Hotel Ganges View</span>
+        <div class="price-bar-outer">
+          <div class="price-bar-inner" style="width:72%;background:#37474f">₹2,650</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <span class="hotel-name">Sunrise Residency</span>
+        <div class="price-bar-outer">
+          <div class="price-bar-inner" style="width:68%;background:#37474f">₹2,500</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <span class="hotel-name">Kashi Heritage Inn</span>
+        <div class="price-bar-outer">
+          <div class="price-bar-inner" style="width:75%;background:#37474f">₹2,750</div>
+        </div>
+      </div>
+      <div class="price-row">
+        <span class="hotel-name">River Palace Hotel</span>
+        <div class="price-bar-outer">
+          <div class="price-bar-inner" style="width:62%;background:#37474f">₹2,300</div>
+        </div>
+      </div>
+      <div style="margin-top:14px;padding:10px;background:rgba(255,152,0,0.08);border-radius:10px;border:1px solid rgba(255,152,0,0.2)">
+        <div style="font-size:12px;color:#ff9800;font-weight:700">💡 Pricing Recommendation</div>
+        <div style="font-size:11px;color:#78909c;margin-top:4px">Drop to ₹2,650 tonight. Demand forecast: +40% search volume. Projected +3 bookings.</div>
+        <div style="margin-top:8px;background:#ff9800;border-radius:6px;padding:5px 12px;display:inline-block;font-size:11px;font-weight:700;color:white;cursor:pointer">Update Price →</div>
+      </div>
+    </div>
+
+    <!-- Nudge Engine -->
+    <div class="card">
+      <div class="card-title">🔔 Smart Nudges — Action Required</div>
+      <div class="nudge high">
+        <div class="nudge-title">🔥 Demand Spike: Next Weekend</div>
+        <div class="nudge-body">Search volume for Jun 21–22 is 3.2x normal (Ganga Aarti festival). You have 4 rooms blocked. Opening them could generate ₹11,400 in additional revenue.</div>
+        <div class="nudge-action">Open Rooms →</div>
+      </div>
+      <div class="nudge medium">
+        <div class="nudge-title">📸 Add Photos to Unlock Score</div>
+        <div class="nudge-body">Adding 8 more photos will bring your Listing Score from 4 to 8, pushing your Health Score to 80+ (Platinum tier). Listings with 15+ photos get 34% more clicks.</div>
+        <div class="nudge-action">Upload Photos →</div>
+      </div>
+      <div class="nudge medium">
+        <div class="nudge-title">💤 Dead Inventory: Jun 18–19</div>
+        <div class="nudge-body">3 rooms unsold for next Tuesday–Wednesday. Suggested price: ₹2,200 (₹650 below current). Estimated booking probability: +55%.</div>
+        <div class="nudge-action">Apply Discount →</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="label-bar">📊 Hotel Partner Success Platform — Portfolio Asset | Aditi Mishra | IIIT Lucknow MBA</div>
+</div>
+</body>
+</html>

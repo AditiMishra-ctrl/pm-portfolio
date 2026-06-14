@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Checkout Funnel Analysis — Food Delivery App</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #fafafa; font-family: 'Segoe UI', sans-serif; padding: 32px; }
+  h1 { font-size: 20px; color: #1a1a2e; font-weight: 800; margin-bottom: 4px; }
+  .subtitle { font-size: 13px; color: #666; margin-bottom: 28px; }
+  .layout { display: grid; grid-template-columns: 1fr 380px; gap: 24px; }
+  /* Funnel */
+  .funnel-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .funnel-title { font-size: 14px; font-weight: 700; color: #333; margin-bottom: 20px; }
+  .step { margin-bottom: 8px; }
+  .step-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+  .step-name { font-size: 13px; font-weight: 700; color: #333; }
+  .step-rate { font-size: 12px; color: #888; }
+  .step-bar-outer { height: 36px; background: #f5f5f5; border-radius: 8px; overflow: hidden; position: relative; }
+  .step-bar-inner { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; font-size: 13px; font-weight: 800; color: white; transition: width 1s; }
+  .drop-label { font-size: 11px; color: #f44336; margin-top: 2px; margin-left: 4px; }
+  .alert-step .step-name { color: #e53935; }
+  .alert-step .step-bar-inner { animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.7} }
+  .alert-badge { display: inline-block; background: #fff3e0; color: #e65100; font-size: 10px; font-weight: 700; border-radius: 10px; padding: 2px 8px; margin-left: 8px; }
+  /* Right panel */
+  .right-panel { display: flex; flex-direction: column; gap: 16px; }
+  .info-card { background: white; border-radius: 14px; padding: 18px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); }
+  .info-card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #888; margin-bottom: 12px; }
+  /* Root causes */
+  .cause-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .cause-pct { font-size: 14px; font-weight: 800; width: 36px; }
+  .cause-bar-wrap { flex: 1; height: 8px; background: #f0f0f0; border-radius: 4px; overflow: hidden; }
+  .cause-bar { height: 100%; border-radius: 4px; }
+  .cause-label { font-size: 12px; color: #555; }
+  /* Interventions */
+  .intervention { padding: 10px 12px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid; }
+  .intervention.p1 { background: #e8f5e9; border-color: #43a047; }
+  .intervention.p2 { background: #e3f2fd; border-color: #1e88e5; }
+  .intervention.p3 { background: #fff8e1; border-color: #fb8c00; }
+  .int-title { font-size: 12px; font-weight: 700; }
+  .intervention.p1 .int-title { color: #2e7d32; }
+  .intervention.p2 .int-title { color: #1565c0; }
+  .intervention.p3 .int-title { color: #e65100; }
+  .int-detail { font-size: 11px; color: #666; margin-top: 2px; }
+  /* Business case */
+  .biz-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f0f0f0; }
+  .biz-row:last-child { border-bottom: none; font-weight: 800; color: #1a237e; }
+  .biz-label { font-size: 12px; color: #555; }
+  .biz-val { font-size: 13px; font-weight: 700; color: #1a237e; }
+  .highlight-box { background: linear-gradient(135deg, #1a237e 0%, #3949ab 100%); border-radius: 12px; padding: 16px; color: white; }
+  .highlight-box .hl-label { font-size: 11px; opacity: 0.8; }
+  .highlight-box .hl-val { font-size: 28px; font-weight: 900; }
+  .highlight-box .hl-sub { font-size: 11px; opacity: 0.7; }
+  .footer-note { text-align: center; font-size: 11px; color: #aaa; margin-top: 24px; }
+</style>
+</head>
+<body>
+  <h1>Checkout Funnel Optimization — Food Delivery App</h1>
+  <div class="subtitle">Conversion Analysis | Root Cause Breakdown | Prioritized Interventions | Aditi Mishra, IIIT Lucknow MBA</div>
+
+  <div class="layout">
+    <!-- Left: Funnel -->
+    <div class="funnel-card">
+      <div class="funnel-title">📊 Daily Checkout Funnel (1M App Opens)</div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-name">App Open</span><span class="step-rate">1,000,000 users</span></div>
+        <div class="step-bar-outer"><div class="step-bar-inner" style="width:100%;background:#1a237e">1,000,000</div></div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#bbb;margin:2px 0">▼ 60% browse to cart</div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-name">Restaurant Browse → Add to Cart</span><span class="step-rate">60% CR</span></div>
+        <div class="step-bar-outer"><div class="step-bar-inner" style="width:60%;background:#283593">600,000</div></div>
+        <div class="drop-label">↙ 400,000 left before cart</div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#bbb;margin:2px 0">▼ 47%</div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-name">Add to Cart → View Cart</span><span class="step-rate">47% CR</span></div>
+        <div class="step-bar-outer"><div class="step-bar-inner" style="width:28%;background:#3949ab">280,000</div></div>
+        <div class="drop-label">↙ 320,000 dropped — browsing only</div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#bbb;margin:2px 0">▼ 86%</div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-name">View Cart → Checkout</span><span class="step-rate">88% CR</span></div>
+        <div class="step-bar-outer"><div class="step-bar-inner" style="width:21%;background:#5c6bc0">210,000</div></div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#f44336;margin:2px 0;font-weight:700">⚠️ BIGGEST DROP-OFF BELOW</div>
+
+      <div class="step alert-step">
+        <div class="step-header">
+          <span class="step-name">Payment Selection <span class="alert-badge">⚠️ 42,000 DROP HERE</span></span>
+          <span class="step-rate" style="color:#e53935">80% CR — LOWEST STEP</span>
+        </div>
+        <div class="step-bar-outer">
+          <div class="step-bar-inner" style="width:16.8%;background:linear-gradient(90deg,#c62828,#e53935)">168,000</div>
+        </div>
+        <div class="drop-label" style="font-size:12px;font-weight:700">↙ 42,000 users abandoned HERE = ₹1.47 Cr daily leakage</div>
+      </div>
+
+      <div style="text-align:center;font-size:11px;color:#bbb;margin:2px 0">▼ 80%</div>
+
+      <div class="step">
+        <div class="step-header"><span class="step-name">✅ Order Placed</span><span class="step-rate">Final</span></div>
+        <div class="step-bar-outer"><div class="step-bar-inner" style="width:13.4%;background:#2e7d32">134,400</div></div>
+      </div>
+
+      <div style="margin-top:16px;padding:14px;background:#fff3e0;border-radius:10px;border:1px solid #ffe0b2">
+        <div style="font-size:13px;font-weight:700;color:#e65100">📌 Opportunity</div>
+        <div style="font-size:12px;color:#555;margin-top:4px">Fixing the payment step alone (42K daily drop-offs) has the highest recovery potential. 84% of these failures are product-fixable.</div>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+
+      <!-- Root Causes -->
+      <div class="info-card">
+        <div class="info-card-title">🔍 Root Causes — Payment Drop-Off</div>
+        <div class="cause-row">
+          <div class="cause-pct" style="color:#e53935">32%</div>
+          <div class="cause-bar-wrap"><div class="cause-bar" style="width:100%;background:#e53935"></div></div>
+          <div class="cause-label">Preferred payment not working</div>
+        </div>
+        <div class="cause-row">
+          <div class="cause-pct" style="color:#ff9800">28%</div>
+          <div class="cause-bar-wrap"><div class="cause-bar" style="width:88%;background:#ff9800"></div></div>
+          <div class="cause-label">Too many options — confusion</div>
+        </div>
+        <div class="cause-row">
+          <div class="cause-pct" style="color:#fb8c00">24%</div>
+          <div class="cause-bar-wrap"><div class="cause-bar" style="width:75%;background:#fb8c00"></div></div>
+          <div class="cause-label">UPI app failed to open</div>
+        </div>
+        <div class="cause-row">
+          <div class="cause-pct" style="color:#66bb6a">18%</div>
+          <div class="cause-bar-wrap"><div class="cause-bar" style="width:56%;background:#66bb6a"></div></div>
+          <div class="cause-label">Session timed out</div>
+        </div>
+        <div class="cause-row">
+          <div class="cause-pct" style="color:#42a5f5">12%</div>
+          <div class="cause-bar-wrap"><div class="cause-bar" style="width:38%;background:#42a5f5"></div></div>
+          <div class="cause-label">Changed mind</div>
+        </div>
+        <div style="margin-top:10px;padding:8px 10px;background:#e8f5e9;border-radius:8px;font-size:11px;color:#2e7d32;font-weight:700">
+          ✓ 84% of drop-offs are product-fixable (not intent-based)
+        </div>
+      </div>
+
+      <!-- Interventions -->
+      <div class="info-card">
+        <div class="info-card-title">🎯 Prioritized Interventions</div>
+        <div class="intervention p1">
+          <div class="int-title">🟢 P1: Sticky Order Summary (Low Effort)</div>
+          <div class="int-detail">Show cart during payment → reduces anxiety. +2–3pp lift</div>
+        </div>
+        <div class="intervention p1">
+          <div class="int-title">🟢 P1: Coupon Pre-validation (Low Effort)</div>
+          <div class="int-detail">Validate at cart stage, not at payment. +1–2pp lift</div>
+        </div>
+        <div class="intervention p2">
+          <div class="int-title">🔵 P2: Smart Retry Flow (Medium)</div>
+          <div class="int-detail">Clear failure reason + 1-tap retry. +3–4pp recovery</div>
+        </div>
+        <div class="intervention p2">
+          <div class="int-title">🔵 P2: Intelligent Payment Defaults (Medium)</div>
+          <div class="int-detail">ML-personalized top method first. +4–6pp lift</div>
+        </div>
+        <div class="intervention p3">
+          <div class="int-title">🟡 P3: UPI Intent Upgrade (High Effort)</div>
+          <div class="int-detail">Replace deep-link with Intent flow. +3–5pp UPI success</div>
+        </div>
+      </div>
+
+      <!-- Business Case -->
+      <div class="highlight-box">
+        <div class="hl-label">Combined Annual Revenue Recovery (Base Case)</div>
+        <div class="hl-val">₹215 Cr</div>
+        <div class="hl-sub">+10pp payment conversion | ₹350 AOV | 1M daily opens</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer-note">Portfolio Asset — Checkout Funnel Optimization | Aditi Mishra | IIIT Lucknow MBA | [ASSUMPTION: All figures are illustrative]</div>
+</body>
+</html>
