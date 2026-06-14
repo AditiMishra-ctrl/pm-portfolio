@@ -34,4 +34,4 @@ Funnel Analysis · RICE Prioritization · GTM Strategy · Figma
 
 ## Contact
 LinkedIn: linkedin.com/in/aditimishra13
-Email: [tera email]
+Email: aditim.1113@gmail.com
